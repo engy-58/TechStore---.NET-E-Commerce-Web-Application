@@ -1,0 +1,78 @@
+﻿@page
+@model Ecommerce.Areas.Admin.Pages.Orders.IndexModel
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <h2>Manage Orders</h2>
+    </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input asp-for="SearchQuery" class="form-control" placeholder="Search by Order ID or User" />
+                </div>
+                <div class="col-md-4">
+                    <select asp-for="StatusFilter" class="form-control" asp-items="Html.GetEnumSelectList<OrderStatus>()">
+                        <option value="">All Statuses</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                    <a asp-page="/Orders/Index" class="btn btn-outline-primary">Clear</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@(order.User?.FullName ?? "Unknown")</td>
+                            <td>@order.OrderDate.ToString("d MMM yyyy")</td>
+                            <td>$@order.TotalAmount.ToString("N2")</td>
+                            <td>@order.PaymentMethod</td>
+                            <td>
+                                <form method="post" asp-page-handler="UpdateStatus" asp-route-id="@order.Id">
+                                    <select name="status" onchange="this.form.submit()" class="form-control">
+                                        @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                                        {
+                                            <option value="@status" selected="@(order.Status == (OrderStatus)status)">@status</option>
+                                        }
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <a asp-page="/Orders/Details" asp-route-id="@order.Id" class="btn btn-outline-primary btn-sm">Details</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

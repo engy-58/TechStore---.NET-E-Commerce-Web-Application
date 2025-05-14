@@ -1,0 +1,69 @@
+﻿@using Ecommerce.ViewModels
+@model List<Ecommerce.ViewModels.OrderConfirmationViewModel>
+@{
+    ViewData["Title"] = "Order History";
+}
+<div class="container mt-5">
+    <h2 class="mb-4">Order History</h2>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (Model.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Order Date</th>
+                    <th>Total</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th>Items</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderId</td>
+                        <td>@order.OrderDate.ToString("g")</td>
+                        <td>@order.TotalAmount.ToString("C")</td>
+                        <td>@order.PaymentMethod</td>
+                        <td>@order.Status</td>
+                        <td>
+                            <ul>
+                                @foreach (var item in order.OrderItems)
+                                {
+                                    <li>
+                                        <img src="@(item.ImageUrl ?? "/images/default.jpg")" alt="@item.ProductName" style="max-width: 30px;" />
+                                        @item.ProductName (@($"x{item.Quantity}")) - @item.UnitPrice.ToString("C")
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                        <td>
+                            @if (order.Status == "Pending")
+                            {
+                                <form asp-action="Cancel" asp-route-orderId="@order.OrderId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                                </form>
+                            }
+                            <a asp-action="Confirmation" asp-route-orderId="@order.OrderId" class="btn btn-primary btn-sm">View Details</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>You have no orders.</p>
+    }
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Continue Shopping</a>
+</div>

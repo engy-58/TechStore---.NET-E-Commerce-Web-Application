@@ -1,0 +1,79 @@
+﻿@model Ecommerce.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+<!-- Hero Section -->
+<div class="hero-section text-center text-white" style="background-image: url('/images/hero-bg.webp'); background-size: cover; padding: 100px 0;">
+    <div class="container">
+        <h1 class="display-4">Welcome to E-Commerce</h1>
+        <p class="lead">Discover the best deals on electronics, clothing, books, and more!</p>
+        <a asp-controller="Product" asp-action="List" class="btn btn-primary btn-lg">Shop Now</a>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <h2>Shop by Category</h2>
+    </div>
+    <div class="row">
+        @foreach (var category in Model.Categories)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@category.Name</h5>
+                        <p class="card-text">@category.Description</p>
+                        <a asp-controller="Product" asp-action="List" asp-route-categoryId="@category.Id" class="btn btn-outline-primary">Explore @category.Name</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+<div class="container mt-5">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="text-center my-4">
+        <h2>Featured Products</h2>
+    </div>
+    <div class="row">
+        @foreach (var product in Model.FeaturedProducts)
+        {
+            <div class="col-md-3 mb-4">
+                <div class="card product-card">
+                    <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="card-link"></a>
+                    <img src="@product.ImageUrl" class="card-img-top product-image" alt="@product.Name" />
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Price.ToString("C")</p>
+                        <p class="card-text">Stock: @product.StockQuantity</p>
+                        @if (product.StockQuantity > 0)
+                        {
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <input type="number" name="quantity" value="1" min="1" max="@product.StockQuantity" class="form-control d-inline w-50" />
+                                <button type="submit" class="btn btn-primary add-to-cart-btn mt-2">Add to Cart</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <button class="btn btn-secondary" disabled>Out of Stock</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

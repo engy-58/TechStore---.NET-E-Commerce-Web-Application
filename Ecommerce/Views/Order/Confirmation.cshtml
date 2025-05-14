@@ -1,0 +1,45 @@
+﻿@using Ecommerce.ViewModels
+@model OrderConfirmationViewModel
+@{
+    ViewData["Title"] = "Order Confirmation";
+}
+<div class="container mt-5">
+    <h2 class="mb-4">Order Confirmation</h2>
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <p>Order ID: @Model.OrderId</p>
+    <p>Order Date: @Model.OrderDate.ToString("g")</p>
+    <p>Total: @Model.TotalAmount.ToString("C")</p>
+    <p>Payment Method: @Model.PaymentMethod</p>
+    <p>Status: @Model.Status</p>
+    <h4>Items</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderItems)
+            {
+                <tr>
+                    <td>
+                        <img src="@(item.ImageUrl ?? "/images/default.jpg")" alt="@item.ProductName" style="max-width: 50px;" />
+                    </td>
+                    <td>@item.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice.ToString("C")</td>
+                    <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Continue Shopping</a>
+    <a asp-action="History" class="btn btn-secondary">View Order History</a>
+</div>

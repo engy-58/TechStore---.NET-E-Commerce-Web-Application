@@ -1,0 +1,77 @@
+﻿@page
+@model Ecommerce.Areas.Admin.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<div class="container mt-5">
+    <div class="text-center my-4">
+        <h2>Admin Dashboard</h2>
+    </div>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text display-4">@Model.TotalOrders</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Total Revenue</h5>
+                    <p class="card-text display-4">$@Model.TotalRevenue.ToString("N2")</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Low Stock Products</h5>
+                    <p class="card-text display-4">@Model.LowStockProducts</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center my-4">
+        <h3>Recent Orders</h3>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.RecentOrders)
+                    {
+                        <tr>
+                            <td>@order.Id</td>
+                            <td>@(order.User?.FullName ?? "Unknown")</td>
+                            <td>@order.OrderDate.ToString("d MMM yyyy")</td>
+                            <td>$@order.TotalAmount.ToString("N2")</td>
+                            <td>@order.Status</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="text-center">
+                <a asp-page="/Orders/Index" class="btn btn-primary">View All Orders</a>
+            </div>
+        </div>
+    </div>
+</div>
