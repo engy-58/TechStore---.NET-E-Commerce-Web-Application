@@ -123,7 +123,7 @@ async Task SeedDataAsync(IServiceProvider services)
             Country = "Adminland",
             PhoneNumber = "123-456-7890"
         };
-        var result = await userManager.CreateAsync(adminUser, "Admin123!");
+        var result = await userManager.CreateAsync(adminUser, builder.Configuration["DefaultPasswords:AdminPassword"] ?? "TempAdmin123!");
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -151,7 +151,7 @@ async Task SeedDataAsync(IServiceProvider services)
             Country = "Userland",
             PhoneNumber = "987-654-3210"
         };
-        var result = await userManager.CreateAsync(user, "Password123!");
+        var result = await userManager.CreateAsync(user, builder.Configuration["DefaultPasswords:UserPassword"] ?? "TempUser123!");
         if (result.Succeeded)
         {
             logger.LogInformation("Regular user created.");
